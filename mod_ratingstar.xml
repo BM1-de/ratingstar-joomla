@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" client="site" method="upgrade">
+    <name>RatingStar</name>
+    <author>Baumgärtner Marketing GmbH</author>
+    <authorUrl>https://bm1.de</authorUrl>
+    <creationDate>2026-06</creationDate>
+    <copyright>(C) Baumgärtner Marketing GmbH</copyright>
+    <license>proprietary</license>
+    <version>0.1.0</version>
+    <description>RatingStar-Siegel und Google-Sterne (Rich Snippets) für Joomla.</description>
+    <files>
+        <filename module="mod_ratingstar">mod_ratingstar.php</filename>
+        <folder>tmpl</folder>
+    </files>
+</extension>
