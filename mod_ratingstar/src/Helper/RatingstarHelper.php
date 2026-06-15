@@ -62,6 +62,14 @@ class RatingstarHelper
     public const POSITION_VARIANTS = ['floating', 'footer-bar'];
 
     /**
+     * Variants for the static-image fallback (CONTRACT.md §12) — the
+     * `/seal/<slug>.svg?variant=` endpoint only knows banner|circle|card.
+     *
+     * @var array<int, string>
+     */
+    public const STATIC_VARIANTS = ['banner', 'circle', 'card'];
+
+    /**
      * Assembles the data the template needs to render the seal embed.
      *
      * @param   Registry  $params  The module params.
@@ -86,6 +94,17 @@ class RatingstarHelper
             $position = '';
         }
 
+        // Static-image fallback (CONTRACT.md §12): a plain <img> of the SVG /
+        // award endpoint, no seal.js. For email/PDF/AMP or JS-off contexts.
+        $renderMode    = $params->get('render_mode', 'live') === 'static' ? 'static' : 'live';
+        $staticVariant = (string) $params->get('static_variant', 'banner');
+        $awardSlug     = trim((string) $params->get('award_slug', ''));
+        $imgUrl        = '';
+
+        if ($renderMode === 'static' && $slug !== '') {
+            $imgUrl = $this->buildStaticImageUrl($origin, $slug, $staticVariant, $awardSlug);
+        }
+
         return (object) [
             'slug'          => $slug,
             'origin'        => $origin,
@@ -93,7 +112,41 @@ class RatingstarHelper
             'position'      => $position,
             'noRichsnippet' => (bool) $params->get('no_richsnippet', 0),
             'scriptUrl'     => $origin . '/seal.js',
+            'renderMode'    => $renderMode,
+            'imgUrl'        => $imgUrl,
         ];
+    }
+
+    /**
+     * Builds the static-image URL for the fallback mode (CONTRACT.md §12).
+     * banner|circle|card → the seal SVG; `award` → the award-badge SVG (only
+     * when the award slug matches the `<type>-<level>` form).
+     *
+     * @param   string  $origin         The base origin.
+     * @param   string  $slug           The profile slug.
+     * @param   string  $staticVariant  banner|circle|card|award.
+     * @param   string  $awardSlug      The award slug (for the award variant).
+     *
+     * @return  string  The image URL, or '' when it cannot be built.
+     */
+    private function buildStaticImageUrl(string $origin, string $slug, string $staticVariant, string $awardSlug): string
+    {
+        $base = $origin . '/seal/' . rawurlencode($slug);
+
+        if ($staticVariant === 'award') {
+            // Award slug shape enforced by the app route: [a-z_]+-<digits>.
+            if (preg_match('/^[a-z_]+-\d+$/', $awardSlug) !== 1) {
+                return '';
+            }
+
+            return $base . '/award/' . $awardSlug . '.svg';
+        }
+
+        if (!\in_array($staticVariant, self::STATIC_VARIANTS, true)) {
+            $staticVariant = 'banner';
+        }
+
+        return $base . '.svg?variant=' . $staticVariant;
     }
 
     /**

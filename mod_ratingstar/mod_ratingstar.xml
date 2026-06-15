@@ -74,6 +74,43 @@
                     <option value="top-right">MOD_RATINGSTAR_POSITION_TOP_RIGHT</option>
                     <option value="top-left">MOD_RATINGSTAR_POSITION_TOP_LEFT</option>
                 </field>
+
+                <field
+                    name="render_mode"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_RENDER_MODE_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_RENDER_MODE_DESC"
+                    default="live"
+                    validate="options"
+                >
+                    <option value="live">MOD_RATINGSTAR_RENDER_MODE_LIVE</option>
+                    <option value="static">MOD_RATINGSTAR_RENDER_MODE_STATIC</option>
+                </field>
+
+                <field
+                    name="static_variant"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_STATIC_VARIANT_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_STATIC_VARIANT_DESC"
+                    default="banner"
+                    validate="options"
+                    showon="render_mode:static"
+                >
+                    <option value="banner">MOD_RATINGSTAR_STATIC_VARIANT_BANNER</option>
+                    <option value="circle">MOD_RATINGSTAR_STATIC_VARIANT_CIRCLE</option>
+                    <option value="card">MOD_RATINGSTAR_STATIC_VARIANT_CARD</option>
+                    <option value="award">MOD_RATINGSTAR_STATIC_VARIANT_AWARD</option>
+                </field>
+
+                <field
+                    name="award_slug"
+                    type="text"
+                    label="MOD_RATINGSTAR_FIELD_AWARD_SLUG_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_AWARD_SLUG_DESC"
+                    filter="string"
+                    hint="top_rated-3"
+                    showon="render_mode:static[AND]static_variant:award"
+                />
             </fieldset>
 
             <fieldset name="advanced">

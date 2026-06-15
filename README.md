@@ -23,6 +23,9 @@ das Rendering übernimmt RatingStar. Parameter pro Modul-Instanz:
   Profil-Karte, Trust-Bar, Floating-Badge, Hero-Snippet, Featured Quote,
   Carousel, Wall of Love, Footer-Bar (live, ab 4-Star-Tarif).
 - **Position** — Bildschirm-Ecke für Floating-Badge / Footer-Bar.
+- **Darstellung** — Live-Widget (seal.js) oder **statisches Bild** ohne
+  JavaScript (`<img>` des Siegel-SVG: Banderole/Rundsiegel/Karte, oder ein
+  Auszeichnungs-Badge) — für E-Mail/PDF/AMP/JS-aus (CONTRACT §12).
 - **Basis-Origin** (erweitert) — Standard `https://ratingstar.de`.
 - **Client-Rich-Snippet unterdrücken** (erweitert) — setzt
   `data-no-richsnippet="1"`, wenn das JSON-LD-Plugin aktiv ist.
@@ -38,6 +41,11 @@ Client-Verbindung. Reicht das Schema unverändert durch (nacktes
 `seal.js` seine eigene Client-Injektion unterdrückt → ein Block pro Seite.
 
 Parameter: **API-Key** (`rs_live_…`), **Basis-Origin**, **Cache-Dauer**.
+
+Beim Speichern einer Siegel-Modul-Instanz prüft das Plugin zusätzlich
+**nicht-blockierend** den Slug (`GET <origin>/t/<slug>`) und bestätigt den
+Profilnamen aus dem `<title>` bzw. warnt — der Wert wird immer gespeichert
+(CONTRACT §3).
 
 > **Auslieferung:** Sobald im RatingStar-Admin (Tab „Auslieferung“) eine
 > Liefer-Domain eingetragen ist, werden die *slug-basierten* Siegel-Daten nur

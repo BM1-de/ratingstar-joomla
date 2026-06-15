@@ -12,7 +12,9 @@ namespace Joomla\Plugin\System\Ratingstar\Extension;
 
 use Joomla\CMS\Cache\CacheControllerFactoryInterface;
 use Joomla\CMS\Document\HtmlDocument;
+use Joomla\CMS\Event\Model\AfterSaveEvent;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Event\SubscriberInterface;
 use Joomla\Http\HttpFactory;
@@ -52,7 +54,10 @@ final class Ratingstar extends CMSPlugin implements SubscriberInterface
      */
     public static function getSubscribedEvents(): array
     {
-        return ['onBeforeCompileHead' => 'onBeforeCompileHead'];
+        return [
+            'onBeforeCompileHead'  => 'onBeforeCompileHead',
+            'onExtensionAfterSave' => 'onExtensionAfterSave',
+        ];
     }
 
     /**
@@ -111,6 +116,85 @@ final class Ratingstar extends CMSPlugin implements SubscriberInterface
         // client-side JSON-LD injection (it bails when it finds
         // script[data-rs-jsonld]) → guarantees exactly one block per page.
         $doc->addCustomTag('<script type="application/ld+json" data-rs-jsonld="1">' . $json . '</script>');
+    }
+
+    /**
+     * Non-blocking slug verification (CONTRACT.md §3). When a RatingStar seal
+     * module is saved, GET <origin>/t/<slug> and confirm the profile via its
+     * <title>, or warn — without ever changing the saved value.
+     *
+     * @param   AfterSaveEvent  $event  The save event.
+     *
+     * @return  void
+     */
+    public function onExtensionAfterSave(AfterSaveEvent $event): void
+    {
+        if ($event->getContext() !== 'com_modules.module') {
+            return;
+        }
+
+        $table = $event->getItem();
+
+        if (!\is_object($table) || ($table->module ?? '') !== 'mod_ratingstar') {
+            return;
+        }
+
+        $params = $table->params ?? '';
+
+        if (\is_string($params)) {
+            $params = json_decode($params, true) ?: [];
+        }
+
+        $params = (array) $params;
+        $slug   = trim((string) ($params['slug'] ?? ''));
+
+        if ($slug === '') {
+            return;
+        }
+
+        $origin = $this->normalizeOrigin((string) ($params['base_origin'] ?? self::DEFAULT_ORIGIN));
+        $url    = $origin . '/t/' . rawurlencode($slug);
+
+        $app  = $this->getApplication();
+        $body = self::httpFetch($url, 5);
+
+        // Non-blocking: the value is already saved (a typo stays fixable). We
+        // only confirm the profile or warn — never reject the save.
+        if ($body === '') {
+            $app->enqueueMessage(Text::sprintf('PLG_SYSTEM_RATINGSTAR_SLUG_UNVERIFIED', $slug), 'warning');
+
+            return;
+        }
+
+        $name = $this->extractTitle($body);
+
+        if ($name !== '') {
+            $app->enqueueMessage(Text::sprintf('PLG_SYSTEM_RATINGSTAR_SLUG_OK', $name), 'message');
+        } else {
+            $app->enqueueMessage(Text::sprintf('PLG_SYSTEM_RATINGSTAR_SLUG_REACHED', $slug), 'message');
+        }
+    }
+
+    /**
+     * Extracts the profile name from a /t/<slug> page's <title> (CONTRACT.md §3),
+     * dropping a trailing " – Site name" suffix.
+     *
+     * @param   string  $html  The page HTML.
+     *
+     * @return  string  The profile name, or '' when no title is found.
+     */
+    private function extractTitle(string $html): string
+    {
+        if (preg_match('/<title[^>]*>(.*?)<\/title>/is', $html, $m) !== 1) {
+            return '';
+        }
+
+        $title = html_entity_decode(trim($m[1]), ENT_QUOTES, 'UTF-8');
+
+        // Drop a trailing site-name suffix after a dash / pipe separator.
+        $parts = preg_split('/\s+[\x{2013}\x{2014}\-|·]\s+/u', $title);
+
+        return trim($parts[0] ?? $title);
     }
 
     /**

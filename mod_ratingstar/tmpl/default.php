@@ -35,6 +35,22 @@ if ($seal->slug === '') {
     return;
 }
 
+// Static-image fallback (CONTRACT.md §12): a plain <img> of the SVG / award
+// endpoint, no seal.js and no third-party JS at all — for email/PDF/AMP or
+// JS-off contexts.
+if ($seal->renderMode === 'static') {
+    if ($seal->imgUrl === '') {
+        return;
+    }
+
+    echo '<img class="rs-seal-static" src="'
+        . htmlspecialchars($seal->imgUrl, ENT_QUOTES, 'UTF-8')
+        . '" alt="' . htmlspecialchars(Text::_('MOD_RATINGSTAR_SEAL_ALT'), ENT_QUOTES, 'UTF-8')
+        . '" loading="lazy" decoding="async" />';
+
+    return;
+}
+
 // Load seal.js once per page. The WebAssetManager dedupes by asset name, so
 // multiple seal modules on one page still emit a single async <script>
 // (CONTRACT.md §4). seal.js derives the RatingStar origin from its own src.
