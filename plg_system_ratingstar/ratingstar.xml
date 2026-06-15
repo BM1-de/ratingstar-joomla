@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="system" method="upgrade">
+    <name>PLG_SYSTEM_RATINGSTAR</name>
+    <author>Baumgärtner Marketing GmbH</author>
+    <authorUrl>https://bm1.de</authorUrl>
+    <creationDate>2026-06</creationDate>
+    <copyright>(C) Baumgärtner Marketing GmbH</copyright>
+    <license>proprietary</license>
+    <version>0.2.0</version>
+    <description>PLG_SYSTEM_RATINGSTAR_XML_DESCRIPTION</description>
+    <namespace path="src">Joomla\Plugin\System\Ratingstar</namespace>
+    <files>
+        <folder plugin="ratingstar">services</folder>
+        <folder>src</folder>
+    </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/en-GB.plg_system_ratingstar.ini</language>
+        <language tag="en-GB">language/en-GB/en-GB.plg_system_ratingstar.sys.ini</language>
+        <language tag="de-DE">language/de-DE/de-DE.plg_system_ratingstar.ini</language>
+        <language tag="de-DE">language/de-DE/de-DE.plg_system_ratingstar.sys.ini</language>
+    </languages>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field
+                    name="api_key"
+                    type="text"
+                    label="PLG_SYSTEM_RATINGSTAR_FIELD_API_KEY_LABEL"
+                    description="PLG_SYSTEM_RATINGSTAR_FIELD_API_KEY_DESC"
+                    filter="string"
+                    hint="rs_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                />
+
+                <field
+                    name="base_origin"
+                    type="url"
+                    label="PLG_SYSTEM_RATINGSTAR_FIELD_BASE_ORIGIN_LABEL"
+                    description="PLG_SYSTEM_RATINGSTAR_FIELD_BASE_ORIGIN_DESC"
+                    default="https://ratingstar.de"
+                    filter="url"
+                    hint="https://ratingstar.de"
+                />
+
+                <field
+                    name="cache_lifetime"
+                    type="number"
+                    label="PLG_SYSTEM_RATINGSTAR_FIELD_CACHE_LABEL"
+                    description="PLG_SYSTEM_RATINGSTAR_FIELD_CACHE_DESC"
+                    default="60"
+                    min="1"
+                    max="1440"
+                    filter="integer"
+                />
+
+                <field
+                    name="key_note"
+                    type="note"
+                    label="PLG_SYSTEM_RATINGSTAR_FIELD_KEY_NOTE_LABEL"
+                    description="PLG_SYSTEM_RATINGSTAR_FIELD_KEY_NOTE_DESC"
+                />
+
+                <field
+                    name="whitelist_note"
+                    type="note"
+                    label="PLG_SYSTEM_RATINGSTAR_FIELD_WHITELIST_NOTE_LABEL"
+                    description="PLG_SYSTEM_RATINGSTAR_FIELD_WHITELIST_NOTE_DESC"
+                />
+
+                <field
+                    name="privacy_note"
+                    type="note"
+                    label="PLG_SYSTEM_RATINGSTAR_FIELD_PRIVACY_NOTE_LABEL"
+                    description="PLG_SYSTEM_RATINGSTAR_FIELD_PRIVACY_NOTE_DESC"
+                />
+            </fieldset>
+        </fields>
+    </config>
+</extension>

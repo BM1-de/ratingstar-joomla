@@ -1,56 +1,71 @@
 # RatingStar für Joomla
 
-Bindet das RatingStar-Siegel bzw. Bewertungs-Widget einer RatingStar-Filiale
-(https://ratingstar.de) als **Site-Modul** in eine Joomla-Website ein. Das
-Rendering übernimmt RatingStars `seal.js`; das Modul gibt nur das offizielle
-`.rs-seal`-Markup aus und lädt das Script einmal pro Seite.
+Bindet das RatingStar-Bewertungssiegel und die Google-Sterne (Rich Snippets)
+einer RatingStar-Filiale (https://ratingstar.de) in eine Joomla-Website ein.
 
-**Status:** Siegel-Modul implementiert (Joomla 6). Server-seitiges
-Google-Sterne-JSON-LD (System-Plugin) folgt als nächster Schritt.
+Das Produkt besteht aus **zwei Extensions**, gebündelt in einem
+Installations-Paket (`pkg_ratingstar`):
 
-## Funktionsumfang
+| Extension | Typ | Aufgabe |
+|---|---|---|
+| `mod_ratingstar` | Site-Modul | Siegel-/Widget-Embed (`.rs-seal` + `seal.js`) |
+| `plg_system_ratingstar` | System-Plugin | server-seitiges `LocalBusiness`-JSON-LD im Seitenkopf |
 
-- Modul-Parameter:
-  - **Profil-Slug** — der `/t/<slug>`-Handle der Filiale.
-  - **Widget-Variante** — voller Satz: Rundsiegel, Banderole (statisch) sowie
-    Profil-Karte, Trust-Bar, Floating-Badge, Hero-Snippet, Featured Quote,
-    Carousel, Wall of Love, Footer-Bar (live, ab 4-Star-Tarif).
-  - **Position** — Bildschirm-Ecke für Floating-Badge / Footer-Bar
-    (überschreibt die RatingStar-Konfiguration; nur diese beiden Varianten).
-  - **Basis-Origin** (erweitert) — Standard `https://ratingstar.de`; für
-    Staging / Self-Hosting anpassbar. Alle URLs werden daraus gebaut.
-  - **Client-Rich-Snippet unterdrücken** (erweitert) — setzt
-    `data-no-richsnippet="1"`, sobald das JSON-LD server-seitig ausgeliefert
-    wird (genau ein JSON-LD-Block pro Seite).
-- Lädt `seal.js` per WebAssetManager **einmal pro Seite**, auch bei mehreren
-  Modul-Instanzen.
-- Mehrsprachig (de-DE / en-GB), alle Attributwerte HTML-escaped.
+**Status:** Beide Extensions implementiert (Joomla 6, moderne Struktur).
 
-## Installation
+## Siegel-Modul (`mod_ratingstar`)
 
-Modul-Dateien nach `modules/mod_ratingstar` legen, dann im Backend unter
-**System → Verwalten → Entdecken (Discover)** das Modul `RatingStar` finden und
-installieren. Anschließend unter **Inhalt → Site-Module** eine Modul-Instanz
-anlegen, den Profil-Slug und die Variante setzen und einer Modul-Position bzw.
-Seite zuweisen.
+Gibt das offizielle `.rs-seal`-Markup aus und lädt `seal.js` einmal pro Seite;
+das Rendering übernimmt RatingStar. Parameter pro Modul-Instanz:
+
+- **Profil-Slug** — der `/t/<slug>`-Handle der Filiale.
+- **Widget-Variante** — voller Satz: Rundsiegel, Banderole (statisch) sowie
+  Profil-Karte, Trust-Bar, Floating-Badge, Hero-Snippet, Featured Quote,
+  Carousel, Wall of Love, Footer-Bar (live, ab 4-Star-Tarif).
+- **Position** — Bildschirm-Ecke für Floating-Badge / Footer-Bar.
+- **Basis-Origin** (erweitert) — Standard `https://ratingstar.de`.
+- **Client-Rich-Snippet unterdrücken** (erweitert) — setzt
+  `data-no-richsnippet="1"`, wenn das JSON-LD-Plugin aktiv ist.
+
+## JSON-LD-Plugin (`plg_system_ratingstar`)
+
+Holt das fertige `LocalBusiness`-JSON-LD vom key-basierten Endpunkt
+(`<origin>/seal/k/<key>.jsonld`), cacht es server-seitig und injiziert **genau
+einen** `<script type="application/ld+json">`-Block in den Seitenkopf — ohne
+Client-Verbindung. Reicht das Schema unverändert durch (nacktes
+`LocalBusiness` ohne Bewertungen unter dem 4-Star-Tarif / bei 0 Bewertungen,
+`aggregateRating` + `review[]` darüber). Setzt `data-rs-jsonld`, wodurch
+`seal.js` seine eigene Client-Injektion unterdrückt → ein Block pro Seite.
+
+Parameter: **API-Key** (`rs_live_…`), **Basis-Origin**, **Cache-Dauer**.
 
 > **Auslieferung:** Sobald im RatingStar-Admin (Tab „Auslieferung“) eine
-> Liefer-Domain eingetragen ist, werden die Siegel-Daten nur an DNS-verifizierte
-> Domains ausgeliefert — die Domain dieser Website dort eintragen und
-> verifizieren.
+> Liefer-Domain eingetragen ist, werden die *slug-basierten* Siegel-Daten nur
+> an DNS-verifizierte Domains ausgeliefert — die Domain dort eintragen und
+> verifizieren. Der key-basierte JSON-LD-Weg ist auf allen Tarifen offen.
 >
-> **Datenschutz:** `seal.js`, `seal.css`, die Widget-Daten und das
-> Tracking-Pixel laden von der RatingStar-Origin (Dritt-Host). In der
-> Datenschutzerklärung nennen und im Consent-Tool behandeln.
+> **Datenschutz:** `seal.js` & Co. laden von der RatingStar-Origin (Dritt-Host)
+> — in Datenschutzerklärung/Consent nennen. Der server-seitige JSON-LD-Weg
+> braucht keine Client-Verbindung.
 
-## Entwicklung
-
-Dieses Repo enthält **nur das Modul** (moderne Joomla-6-Struktur:
-`services/provider.php`, `src/Dispatcher`, `src/Helper`, `tmpl`). Die lokale
-Test-Instanz liegt drumherum: DDEV-Projekt `ratingstar-plugin-joomla`
-(https://ratingstar-plugin-joomla.ddev.site, Administrator `/administrator`).
+## Build & Installation
 
 ```bash
-cd ~/Sites/Dev/ratingstar-plugin-joomla
-ddev start
+./build.sh            # erzeugt dist/pkg_ratingstar.zip
+```
+
+Das `dist/pkg_ratingstar.zip` im Joomla-Backend unter **System → Installieren →
+Erweiterungen** hochladen — installiert Modul + Plugin in einem Schritt.
+Anschließend: Modul-Instanz unter **Inhalt → Site-Module** anlegen
+(Slug + Variante), Plugin unter **System → Plugins** aktivieren (API-Key).
+
+## Repo-Struktur
+
+```
+ratingstar-joomla/
+├── pkg_ratingstar.xml          Paket-Manifest
+├── mod_ratingstar/             Site-Modul (moderne J6-Struktur)
+├── plg_system_ratingstar/      System-Plugin
+├── language/                   Paket-Sprachdateien
+└── build.sh                    baut dist/pkg_ratingstar.zip
 ```
