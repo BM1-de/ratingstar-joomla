@@ -1,15 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="module" client="site" method="upgrade">
-    <name>RatingStar</name>
+    <name>MOD_RATINGSTAR</name>
     <author>Baumgärtner Marketing GmbH</author>
     <authorUrl>https://bm1.de</authorUrl>
     <creationDate>2026-06</creationDate>
     <copyright>(C) Baumgärtner Marketing GmbH</copyright>
     <license>proprietary</license>
-    <version>0.1.0</version>
-    <description>RatingStar-Siegel und Google-Sterne (Rich Snippets) für Joomla.</description>
+    <version>0.2.0</version>
+    <description>MOD_RATINGSTAR_XML_DESCRIPTION</description>
+    <namespace path="src">Joomla\Module\Ratingstar</namespace>
     <files>
-        <filename module="mod_ratingstar">mod_ratingstar.php</filename>
+        <folder module="mod_ratingstar">services</folder>
+        <folder>src</folder>
         <folder>tmpl</folder>
     </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/en-GB.mod_ratingstar.ini</language>
+        <language tag="en-GB">language/en-GB/en-GB.mod_ratingstar.sys.ini</language>
+        <language tag="de-DE">language/de-DE/de-DE.mod_ratingstar.ini</language>
+        <language tag="de-DE">language/de-DE/de-DE.mod_ratingstar.sys.ini</language>
+    </languages>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field
+                    name="slug"
+                    type="text"
+                    label="MOD_RATINGSTAR_FIELD_SLUG_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_SLUG_DESC"
+                    filter="cmd"
+                    hint="cafe-sonne"
+                />
+
+                <field
+                    name="variant"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_VARIANT_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_VARIANT_DESC"
+                    default="seal-circle"
+                    validate="options"
+                >
+                    <option value="seal-circle">MOD_RATINGSTAR_VARIANT_SEAL_CIRCLE</option>
+                    <option value="seal-circle-banner">MOD_RATINGSTAR_VARIANT_SEAL_CIRCLE_BANNER</option>
+                    <option value="profile-card">MOD_RATINGSTAR_VARIANT_PROFILE_CARD</option>
+                    <option value="bar">MOD_RATINGSTAR_VARIANT_BAR</option>
+                    <option value="floating">MOD_RATINGSTAR_VARIANT_FLOATING</option>
+                    <option value="hero">MOD_RATINGSTAR_VARIANT_HERO</option>
+                    <option value="quote">MOD_RATINGSTAR_VARIANT_QUOTE</option>
+                    <option value="carousel">MOD_RATINGSTAR_VARIANT_CAROUSEL</option>
+                    <option value="wall">MOD_RATINGSTAR_VARIANT_WALL</option>
+                    <option value="footer-bar">MOD_RATINGSTAR_VARIANT_FOOTER_BAR</option>
+                </field>
+
+                <field
+                    name="variant_note"
+                    type="note"
+                    label="MOD_RATINGSTAR_FIELD_VARIANT_NOTE_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_VARIANT_NOTE_DESC"
+                />
+
+                <field
+                    name="position"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_POSITION_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_POSITION_DESC"
+                    default=""
+                    validate="options"
+                    showon="variant:floating[OR]variant:footer-bar"
+                >
+                    <option value="">MOD_RATINGSTAR_POSITION_INHERIT</option>
+                    <option value="bottom-right">MOD_RATINGSTAR_POSITION_BOTTOM_RIGHT</option>
+                    <option value="bottom-left">MOD_RATINGSTAR_POSITION_BOTTOM_LEFT</option>
+                    <option value="top-right">MOD_RATINGSTAR_POSITION_TOP_RIGHT</option>
+                    <option value="top-left">MOD_RATINGSTAR_POSITION_TOP_LEFT</option>
+                </field>
+            </fieldset>
+
+            <fieldset name="advanced">
+                <field
+                    name="base_origin"
+                    type="url"
+                    label="MOD_RATINGSTAR_FIELD_BASE_ORIGIN_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_BASE_ORIGIN_DESC"
+                    default="https://ratingstar.de"
+                    filter="url"
+                    hint="https://ratingstar.de"
+                />
+
+                <field
+                    name="no_richsnippet"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="MOD_RATINGSTAR_FIELD_NO_RICHSNIPPET_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_NO_RICHSNIPPET_DESC"
+                    default="0"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+
+                <field
+                    name="whitelist_note"
+                    type="note"
+                    label="MOD_RATINGSTAR_FIELD_WHITELIST_NOTE_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_WHITELIST_NOTE_DESC"
+                />
+
+                <field
+                    name="privacy_note"
+                    type="note"
+                    label="MOD_RATINGSTAR_FIELD_PRIVACY_NOTE_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_PRIVACY_NOTE_DESC"
+                />
+
+                <field
+                    name="layout"
+                    type="modulelayout"
+                    label="JFIELD_ALT_LAYOUT_LABEL"
+                    class="custom-select"
+                    validate="moduleLayout"
+                />
+
+                <field
+                    name="moduleclass_sfx"
+                    type="textarea"
+                    label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                    rows="3"
+                    validate="CssIdentifier"
+                />
+            </fieldset>
+        </fields>
+    </config>
 </extension>
