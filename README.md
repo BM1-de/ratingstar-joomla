@@ -20,9 +20,13 @@ das Rendering übernimmt RatingStar. Parameter pro Modul-Instanz:
 
 - **Profil-Slug** — der `/t/<slug>`-Handle der Filiale.
 - **Widget-Variante** — voller Satz: Rundsiegel, Banderole (statisch) sowie
-  Profil-Karte, Trust-Bar, Floating-Badge, Hero-Snippet, Featured Quote,
-  Carousel, Wall of Love, Footer-Bar (live, ab 4-Star-Tarif).
-- **Position** — Bildschirm-Ecke für Floating-Badge / Footer-Bar.
+  Profil-Karte, Bewertungsleiste, Gesamtnote, Zitat, Karussell,
+  Bewertungswand, Fußleiste (live, ab 4-Star-Tarif). Früher gespeicherte
+  `floating`-Module laufen als Profil-Karte weiter.
+- **Position** — Profil-Karte im Inhalt (inline) oder schwebend in einer
+  Bildschirm-Ecke.
+- **Farbschema** — hell oder dunkel für Bewertungsleiste, Gesamtnote, Zitat,
+  Karussell und Bewertungswand (`data-theme`).
 - **Darstellung** — Live-Widget (seal.js) oder **statisches Bild** ohne
   JavaScript (`<img>` des Siegel-SVG: Banderole/Rundsiegel/Karte, oder ein
   Auszeichnungs-Badge) — für E-Mail/PDF/AMP/JS-aus (CONTRACT §12).
@@ -47,10 +51,10 @@ Beim Speichern einer Siegel-Modul-Instanz prüft das Plugin zusätzlich
 Profilnamen aus dem `<title>` bzw. warnt — der Wert wird immer gespeichert
 (CONTRACT §3).
 
-> **Auslieferung:** Sobald im RatingStar-Admin (Tab „Auslieferung“) eine
-> Liefer-Domain eingetragen ist, werden die *slug-basierten* Siegel-Daten nur
-> an DNS-verifizierte Domains ausgeliefert — die Domain dort eintragen und
-> verifizieren. Der key-basierte JSON-LD-Weg ist auf allen Tarifen offen.
+> **Freigegebene Domains:** Sobald im RatingStar-Admin unter „Siegel & Widgets →
+> Domains & Statistik“ eine Domain DNS-verifiziert ist, werden die
+> *slug-basierten* Siegel-Daten nur noch an verifizierte Domains ausgeliefert —
+> die Domain dort eintragen und verifizieren. Der key-basierte JSON-LD-Weg ist auf allen Tarifen offen.
 >
 > **Datenschutz:** `seal.js` & Co. laden von der RatingStar-Origin (Dritt-Host)
 > — in Datenschutzerklärung/Consent nennen. Der server-seitige JSON-LD-Weg

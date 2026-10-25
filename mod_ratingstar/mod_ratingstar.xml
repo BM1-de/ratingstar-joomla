@@ -44,7 +44,6 @@
                     <option value="seal-circle-banner">MOD_RATINGSTAR_VARIANT_SEAL_CIRCLE_BANNER</option>
                     <option value="profile-card">MOD_RATINGSTAR_VARIANT_PROFILE_CARD</option>
                     <option value="bar">MOD_RATINGSTAR_VARIANT_BAR</option>
-                    <option value="floating">MOD_RATINGSTAR_VARIANT_FLOATING</option>
                     <option value="hero">MOD_RATINGSTAR_VARIANT_HERO</option>
                     <option value="quote">MOD_RATINGSTAR_VARIANT_QUOTE</option>
                     <option value="carousel">MOD_RATINGSTAR_VARIANT_CAROUSEL</option>
@@ -66,13 +65,28 @@
                     description="MOD_RATINGSTAR_FIELD_POSITION_DESC"
                     default=""
                     validate="options"
-                    showon="variant:floating[OR]variant:footer-bar"
+                    showon="variant:profile-card"
                 >
                     <option value="">MOD_RATINGSTAR_POSITION_INHERIT</option>
+                    <option value="inline">MOD_RATINGSTAR_POSITION_INLINE</option>
                     <option value="bottom-right">MOD_RATINGSTAR_POSITION_BOTTOM_RIGHT</option>
                     <option value="bottom-left">MOD_RATINGSTAR_POSITION_BOTTOM_LEFT</option>
                     <option value="top-right">MOD_RATINGSTAR_POSITION_TOP_RIGHT</option>
                     <option value="top-left">MOD_RATINGSTAR_POSITION_TOP_LEFT</option>
+                </field>
+
+                <field
+                    name="theme"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_THEME_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_THEME_DESC"
+                    default=""
+                    validate="options"
+                    showon="variant:bar[OR]variant:hero[OR]variant:quote[OR]variant:carousel[OR]variant:wall"
+                >
+                    <option value="">MOD_RATINGSTAR_POSITION_INHERIT</option>
+                    <option value="light">MOD_RATINGSTAR_THEME_LIGHT</option>
+                    <option value="dark">MOD_RATINGSTAR_THEME_DARK</option>
                 </field>
 
                 <field

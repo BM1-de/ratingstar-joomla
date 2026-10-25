@@ -45,7 +45,6 @@ class RatingstarHelper
         // live (tier 4-Star+)
         'profile-card',
         'bar',
-        'floating',
         'hero',
         'quote',
         'carousel',
@@ -55,11 +54,19 @@ class RatingstarHelper
 
     /**
      * Variants for which a `data-position` override is meaningful
-     * (CONTRACT.md §4).
+     * (CONTRACT.md §4): only the profile card, inline or in a screen corner
+     * (it absorbed the former floating badge).
      *
      * @var array<int, string>
      */
-    public const POSITION_VARIANTS = ['floating', 'footer-bar'];
+    public const POSITION_VARIANTS = ['profile-card'];
+
+    /**
+     * Variants with a dark look via `data-theme` (CONTRACT.md §17).
+     *
+     * @var array<int, string>
+     */
+    public const THEME_VARIANTS = ['bar', 'hero', 'quote', 'carousel', 'wall'];
 
     /**
      * Variants for the static-image fallback (CONTRACT.md §12) — the
@@ -83,15 +90,27 @@ class RatingstarHelper
 
         $variant = (string) $params->get('variant', 'seal-circle');
 
+        // Modules saved before the merge keep working as the profile card.
+        if ($variant === 'floating') {
+            $variant = 'profile-card';
+        }
+
         if (!\in_array($variant, self::VARIANTS, true)) {
             $variant = 'seal-circle';
         }
 
-        // data-position only applies to floating / footer-bar; drop it otherwise.
+        // data-position only applies to the profile card; drop it otherwise.
         $position = (string) $params->get('position', '');
 
         if (!\in_array($variant, self::POSITION_VARIANTS, true)) {
             $position = '';
+        }
+
+        // Empty = the colour scheme from the RatingStar settings.
+        $theme = (string) $params->get('theme', '');
+
+        if (!\in_array($variant, self::THEME_VARIANTS, true) || !\in_array($theme, ['light', 'dark'], true)) {
+            $theme = '';
         }
 
         // Static-image fallback (CONTRACT.md §12): a plain <img> of the SVG /
@@ -110,6 +129,7 @@ class RatingstarHelper
             'origin'        => $origin,
             'variant'       => $variant,
             'position'      => $position,
+            'theme'         => $theme,
             'noRichsnippet' => (bool) $params->get('no_richsnippet', 0),
             'scriptUrl'     => $origin . '/seal.js',
             'renderMode'    => $renderMode,

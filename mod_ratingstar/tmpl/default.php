@@ -73,6 +73,10 @@ if ($seal->position !== '') {
     $attributes[] = 'data-position="' . htmlspecialchars($seal->position, ENT_QUOTES, 'UTF-8') . '"';
 }
 
+if ($seal->theme !== '') {
+    $attributes[] = 'data-theme="' . htmlspecialchars($seal->theme, ENT_QUOTES, 'UTF-8') . '"';
+}
+
 if ($seal->noRichsnippet) {
     $attributes[] = 'data-no-richsnippet="1"';
 }
