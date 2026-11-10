@@ -20,4 +20,7 @@
         <language tag="en-GB">language/en-GB/pkg_ratingstar.sys.ini</language>
         <language tag="de-DE">language/de-DE/pkg_ratingstar.sys.ini</language>
     </languages>
+    <updateservers>
+        <server type="extension" priority="1" name="RatingStar">https://raw.githubusercontent.com/BM1-de/ratingstar-joomla/main/updates.xml</server>
+    </updateservers>
 </extension>

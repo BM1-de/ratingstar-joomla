@@ -34,8 +34,12 @@ Beide stecken in einem Installationspaket (`pkg_ratingstar.zip`).
 4. Die Domain Ihrer Website in RatingStar freigeben (siehe
    [Domain freigeben](#domain-freigeben)).
 
-Ein Update installieren Sie genauso: neues Paket hochladen, die Einstellungen
-bleiben erhalten.
+Updates meldet Joomla von selbst unter **System → Aktualisieren → Erweiterungen**:
+Das Paket bringt einen Update-Server mit. Alternativ installieren Sie ein Update
+genauso wie oben, indem Sie das neue Paket hochladen. Die Einstellungen bleiben
+in beiden Fällen erhalten.
+
+Download: [Releases auf GitHub](https://github.com/BM1-de/ratingstar-joomla/releases).
 
 ## Profil-Slug und API-Key
 
