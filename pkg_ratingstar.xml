@@ -3,21 +3,21 @@
     <name>RatingStar</name>
     <author>Baumgärtner Marketing GmbH</author>
     <authorUrl>https://bm1.de</authorUrl>
-    <creationDate>2026-06</creationDate>
+    <creationDate>2026-11</creationDate>
     <packagename>ratingstar</packagename>
-    <version>0.2.0</version>
+    <version>1.0.0</version>
     <url>https://ratingstar.de</url>
     <packager>Baumgärtner Marketing GmbH</packager>
     <packagerurl>https://bm1.de</packagerurl>
     <copyright>(C) Baumgärtner Marketing GmbH</copyright>
-    <license>proprietary</license>
+    <license>GNU General Public License version 2 or later</license>
     <description>PKG_RATINGSTAR_XML_DESCRIPTION</description>
     <files folder="packages">
         <file type="module" id="mod_ratingstar" client="site">mod_ratingstar.zip</file>
         <file type="plugin" id="ratingstar" group="system">plg_system_ratingstar.zip</file>
     </files>
     <languages>
-        <language tag="en-GB">language/en-GB/en-GB.pkg_ratingstar.sys.ini</language>
-        <language tag="de-DE">language/de-DE/de-DE.pkg_ratingstar.sys.ini</language>
+        <language tag="en-GB">language/en-GB/pkg_ratingstar.sys.ini</language>
+        <language tag="de-DE">language/de-DE/pkg_ratingstar.sys.ini</language>
     </languages>
 </extension>

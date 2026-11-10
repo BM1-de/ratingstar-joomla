@@ -5,7 +5,7 @@
  * @subpackage  mod_ratingstar
  *
  * @copyright   (C) Baumgärtner Marketing GmbH
- * @license     proprietary
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 \defined('_JEXEC') or die;
@@ -26,8 +26,8 @@ return new class () implements ServiceProviderInterface {
      */
     public function register(Container $container): void
     {
-        $container->registerServiceProvider(new ModuleDispatcherFactory('\\Joomla\\Module\\Ratingstar'));
-        $container->registerServiceProvider(new HelperFactory('\\Joomla\\Module\\Ratingstar\\Site\\Helper'));
+        $container->registerServiceProvider(new ModuleDispatcherFactory('\\RatingStar\\Module\\Ratingstar'));
+        $container->registerServiceProvider(new HelperFactory('\\RatingStar\\Module\\Ratingstar\\Site\\Helper'));
         $container->registerServiceProvider(new Module());
     }
 };

@@ -5,7 +5,7 @@
  * @subpackage  mod_ratingstar
  *
  * @copyright   (C) Baumgärtner Marketing GmbH
- * @license     proprietary
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 \defined('_JEXEC') or die;
@@ -21,65 +21,47 @@ use Joomla\CMS\Language\Text;
  * @var \stdClass                              $seal
  */
 
-// Without a slug there is nothing to embed. Show a hint to back-end admins,
-// stay silent for visitors.
-if ($seal->slug === '') {
+$escape = static fn (string $value): string => htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+
+// Nothing to show (no profile configured, award not available): tell
+// administrators why, stay silent for visitors.
+if ($seal->mode === 'none') {
     $user = $app->getIdentity();
 
-    if ($user && $user->authorise('core.admin')) {
-        echo '<div class="alert alert-warning" role="alert">'
-            . Text::_('MOD_RATINGSTAR_NO_SLUG')
-            . '</div>';
+    if ($seal->notice !== '' && $user && $user->authorise('core.admin')) {
+        echo '<div class="alert alert-warning" role="alert">' . Text::_($seal->notice) . '</div>';
     }
 
     return;
 }
 
-// Static-image fallback (CONTRACT.md §12): a plain <img> of the SVG / award
-// endpoint, no seal.js and no third-party JS at all — for email/PDF/AMP or
-// JS-off contexts.
-if ($seal->renderMode === 'static') {
-    if ($seal->imgUrl === '') {
-        return;
-    }
-
-    echo '<img class="rs-seal-static" src="'
-        . htmlspecialchars($seal->imgUrl, ENT_QUOTES, 'UTF-8')
-        . '" alt="' . htmlspecialchars(Text::_('MOD_RATINGSTAR_SEAL_ALT'), ENT_QUOTES, 'UTF-8')
-        . '" loading="lazy" decoding="async" />';
+// Static image: a linked <img> of the seal SVG, without seal.js or any other
+// script — for contexts where JavaScript is not available.
+if ($seal->mode === 'static') {
+    echo '<a class="rs-seal-static-link" href="' . $escape($seal->linkUrl) . '" target="_blank" rel="noopener">'
+        . '<img class="rs-seal-static" src="' . $escape($seal->imgUrl) . '" alt="'
+        . $escape(Text::_($seal->alt)) . '" loading="lazy" decoding="async"></a>';
 
     return;
 }
 
-// Load seal.js once per page. The WebAssetManager dedupes by asset name, so
-// multiple seal modules on one page still emit a single async <script>
-// (CONTRACT.md §4). seal.js derives the RatingStar origin from its own src.
+// seal.js once per page: the asset name dedupes it across all seal modules,
+// and it scans every .rs-seal node itself. No version query, so the URL stays
+// exactly <origin>/seal.js.
 $wa = $app->getDocument()->getWebAssetManager();
 
 if (!$wa->assetExists('script', 'mod_ratingstar.seal')) {
-    $wa->registerScript('mod_ratingstar.seal', $seal->scriptUrl, [], ['async' => true]);
+    $wa->registerScript('mod_ratingstar.seal', $seal->scriptUrl, ['version' => ''], ['async' => true]);
 }
 
 $wa->useScript('mod_ratingstar.seal');
 
-// Official bind markup — every attribute value HTML-escaped (CONTRACT.md §4).
-$attributes = [
-    'class="rs-seal"',
-    'data-slug="' . htmlspecialchars($seal->slug, ENT_QUOTES, 'UTF-8') . '"',
-    'data-variant="' . htmlspecialchars($seal->variant, ENT_QUOTES, 'UTF-8') . '"',
-];
+// The official embed markup; every attribute value is escaped.
+$attributes = '';
 
-if ($seal->position !== '') {
-    $attributes[] = 'data-position="' . htmlspecialchars($seal->position, ENT_QUOTES, 'UTF-8') . '"';
-}
-
-if ($seal->theme !== '') {
-    $attributes[] = 'data-theme="' . htmlspecialchars($seal->theme, ENT_QUOTES, 'UTF-8') . '"';
-}
-
-if ($seal->noRichsnippet) {
-    $attributes[] = 'data-no-richsnippet="1"';
+foreach ($seal->attributes as $name => $value) {
+    $attributes .= ' ' . $name . '="' . $escape((string) $value) . '"';
 }
 
 ?>
-<div <?php echo implode(' ', $attributes); ?>></div>
+<div<?php echo $attributes; ?>></div>

@@ -3,60 +3,68 @@
     <name>PLG_SYSTEM_RATINGSTAR</name>
     <author>Baumgärtner Marketing GmbH</author>
     <authorUrl>https://bm1.de</authorUrl>
-    <creationDate>2026-06</creationDate>
+    <creationDate>2026-11</creationDate>
     <copyright>(C) Baumgärtner Marketing GmbH</copyright>
-    <license>proprietary</license>
-    <version>0.2.0</version>
+    <license>GNU General Public License version 2 or later</license>
+    <version>1.0.0</version>
     <description>PLG_SYSTEM_RATINGSTAR_XML_DESCRIPTION</description>
-    <namespace path="src">Joomla\Plugin\System\Ratingstar</namespace>
+    <namespace path="src">RatingStar\Plugin\System\Ratingstar</namespace>
     <files>
         <folder plugin="ratingstar">services</folder>
+        <folder>language</folder>
         <folder>src</folder>
     </files>
-    <languages>
-        <language tag="en-GB">language/en-GB/en-GB.plg_system_ratingstar.ini</language>
-        <language tag="en-GB">language/en-GB/en-GB.plg_system_ratingstar.sys.ini</language>
-        <language tag="de-DE">language/de-DE/de-DE.plg_system_ratingstar.ini</language>
-        <language tag="de-DE">language/de-DE/de-DE.plg_system_ratingstar.sys.ini</language>
-    </languages>
     <config>
         <fields name="params">
-            <fieldset name="basic">
+            <fieldset name="basic" addruleprefix="RatingStar\Plugin\System\Ratingstar\Rule">
+                <field
+                    name="slug"
+                    type="text"
+                    label="PLG_SYSTEM_RATINGSTAR_FIELD_SLUG_LABEL"
+                    description="PLG_SYSTEM_RATINGSTAR_FIELD_SLUG_DESC"
+                    filter="cmd"
+                    hint="cafe-sonne"
+                />
+
+                <field
+                    name="group"
+                    type="text"
+                    label="PLG_SYSTEM_RATINGSTAR_FIELD_GROUP_LABEL"
+                    description="PLG_SYSTEM_RATINGSTAR_FIELD_GROUP_DESC"
+                    filter="cmd"
+                />
+
                 <field
                     name="api_key"
                     type="text"
                     label="PLG_SYSTEM_RATINGSTAR_FIELD_API_KEY_LABEL"
                     description="PLG_SYSTEM_RATINGSTAR_FIELD_API_KEY_DESC"
-                    filter="string"
-                    hint="rs_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                    message="PLG_SYSTEM_RATINGSTAR_FIELD_API_KEY_INVALID"
+                    filter="trim"
+                    validate="apikey"
+                    maxlength="48"
+                    autocomplete="off"
+                    hint="rs_live_…"
                 />
 
                 <field
-                    name="base_origin"
-                    type="url"
-                    label="PLG_SYSTEM_RATINGSTAR_FIELD_BASE_ORIGIN_LABEL"
-                    description="PLG_SYSTEM_RATINGSTAR_FIELD_BASE_ORIGIN_DESC"
-                    default="https://ratingstar.de"
-                    filter="url"
-                    hint="https://ratingstar.de"
-                />
-
-                <field
-                    name="cache_lifetime"
-                    type="number"
-                    label="PLG_SYSTEM_RATINGSTAR_FIELD_CACHE_LABEL"
-                    description="PLG_SYSTEM_RATINGSTAR_FIELD_CACHE_DESC"
-                    default="60"
-                    min="1"
-                    max="1440"
+                    name="jsonld"
+                    type="radio"
+                    layout="joomla.form.field.radio.switcher"
+                    label="PLG_SYSTEM_RATINGSTAR_FIELD_JSONLD_LABEL"
+                    description="PLG_SYSTEM_RATINGSTAR_FIELD_JSONLD_DESC"
+                    default="1"
                     filter="integer"
-                />
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
 
                 <field
-                    name="key_note"
+                    name="jsonld_note"
                     type="note"
-                    label="PLG_SYSTEM_RATINGSTAR_FIELD_KEY_NOTE_LABEL"
-                    description="PLG_SYSTEM_RATINGSTAR_FIELD_KEY_NOTE_DESC"
+                    label="PLG_SYSTEM_RATINGSTAR_FIELD_JSONLD_NOTE_LABEL"
+                    description="PLG_SYSTEM_RATINGSTAR_FIELD_JSONLD_NOTE_DESC"
                 />
 
                 <field
@@ -71,6 +79,33 @@
                     type="note"
                     label="PLG_SYSTEM_RATINGSTAR_FIELD_PRIVACY_NOTE_LABEL"
                     description="PLG_SYSTEM_RATINGSTAR_FIELD_PRIVACY_NOTE_DESC"
+                />
+            </fieldset>
+
+            <fieldset name="advanced">
+                <field
+                    name="base_origin"
+                    type="url"
+                    label="PLG_SYSTEM_RATINGSTAR_FIELD_BASE_ORIGIN_LABEL"
+                    description="PLG_SYSTEM_RATINGSTAR_FIELD_BASE_ORIGIN_DESC"
+                    default="https://ratingstar.de"
+                    filter="url"
+                    validate="url"
+                    schemes="http,https"
+                    hint="https://ratingstar.de"
+                />
+
+                <field
+                    name="cache_lifetime"
+                    type="number"
+                    label="PLG_SYSTEM_RATINGSTAR_FIELD_CACHE_LABEL"
+                    description="PLG_SYSTEM_RATINGSTAR_FIELD_CACHE_DESC"
+                    default="360"
+                    min="5"
+                    max="1440"
+                    step="1"
+                    filter="integer"
+                    validate="number"
                 />
             </fieldset>
         </fields>

@@ -3,23 +3,18 @@
     <name>MOD_RATINGSTAR</name>
     <author>Baumgärtner Marketing GmbH</author>
     <authorUrl>https://bm1.de</authorUrl>
-    <creationDate>2026-06</creationDate>
+    <creationDate>2026-11</creationDate>
     <copyright>(C) Baumgärtner Marketing GmbH</copyright>
-    <license>proprietary</license>
-    <version>0.2.0</version>
+    <license>GNU General Public License version 2 or later</license>
+    <version>1.0.0</version>
     <description>MOD_RATINGSTAR_XML_DESCRIPTION</description>
-    <namespace path="src">Joomla\Module\Ratingstar</namespace>
+    <namespace path="src">RatingStar\Module\Ratingstar</namespace>
     <files>
         <folder module="mod_ratingstar">services</folder>
+        <folder>language</folder>
         <folder>src</folder>
         <folder>tmpl</folder>
     </files>
-    <languages>
-        <language tag="en-GB">language/en-GB/en-GB.mod_ratingstar.ini</language>
-        <language tag="en-GB">language/en-GB/en-GB.mod_ratingstar.sys.ini</language>
-        <language tag="de-DE">language/de-DE/de-DE.mod_ratingstar.ini</language>
-        <language tag="de-DE">language/de-DE/de-DE.mod_ratingstar.sys.ini</language>
-    </languages>
     <config>
         <fields name="params">
             <fieldset name="basic">
@@ -33,11 +28,19 @@
                 />
 
                 <field
+                    name="group"
+                    type="text"
+                    label="MOD_RATINGSTAR_FIELD_GROUP_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_GROUP_DESC"
+                    filter="cmd"
+                />
+
+                <field
                     name="variant"
                     type="list"
                     label="MOD_RATINGSTAR_FIELD_VARIANT_LABEL"
                     description="MOD_RATINGSTAR_FIELD_VARIANT_DESC"
-                    default="seal-circle"
+                    default="seal-circle-banner"
                     validate="options"
                 >
                     <option value="seal-circle">MOD_RATINGSTAR_VARIANT_SEAL_CIRCLE</option>
@@ -59,6 +62,67 @@
                 />
 
                 <field
+                    name="render_mode"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_RENDER_MODE_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_RENDER_MODE_DESC"
+                    default="live"
+                    validate="options"
+                    showon="variant:seal-circle,seal-circle-banner,profile-card"
+                >
+                    <option value="live">MOD_RATINGSTAR_RENDER_MODE_LIVE</option>
+                    <option value="static">MOD_RATINGSTAR_RENDER_MODE_STATIC</option>
+                </field>
+
+                <field
+                    name="static_motif"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_STATIC_MOTIF_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_STATIC_MOTIF_DESC"
+                    default="seal"
+                    validate="options"
+                    showon="variant:seal-circle,seal-circle-banner,profile-card[AND]render_mode:static"
+                >
+                    <option value="seal">MOD_RATINGSTAR_STATIC_MOTIF_SEAL</option>
+                    <option value="award">MOD_RATINGSTAR_STATIC_MOTIF_AWARD</option>
+                </field>
+
+                <field
+                    name="award_slug"
+                    type="text"
+                    label="MOD_RATINGSTAR_FIELD_AWARD_SLUG_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_AWARD_SLUG_DESC"
+                    filter="cmd"
+                    hint="count_total-25"
+                    showon="variant:seal-circle,seal-circle-banner,profile-card[AND]render_mode:static[AND]static_motif:award"
+                />
+            </fieldset>
+
+            <fieldset name="display" label="MOD_RATINGSTAR_FIELDSET_DISPLAY_LABEL">
+                <field
+                    name="display_note"
+                    type="note"
+                    label="MOD_RATINGSTAR_FIELD_DISPLAY_NOTE_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_DISPLAY_NOTE_DESC"
+                />
+
+                <!-- Round seal, banner seal -->
+                <field
+                    name="size"
+                    type="number"
+                    label="MOD_RATINGSTAR_FIELD_SIZE_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_SIZE_DESC"
+                    hint="MOD_RATINGSTAR_OPTION_DEFAULT"
+                    min="120"
+                    max="320"
+                    step="1"
+                    filter="integer"
+                    validate="number"
+                    showon="variant:seal-circle,seal-circle-banner"
+                />
+
+                <!-- Profile card -->
+                <field
                     name="position"
                     type="list"
                     label="MOD_RATINGSTAR_FIELD_POSITION_LABEL"
@@ -67,7 +131,7 @@
                     validate="options"
                     showon="variant:profile-card"
                 >
-                    <option value="">MOD_RATINGSTAR_POSITION_INHERIT</option>
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
                     <option value="inline">MOD_RATINGSTAR_POSITION_INLINE</option>
                     <option value="bottom-right">MOD_RATINGSTAR_POSITION_BOTTOM_RIGHT</option>
                     <option value="bottom-left">MOD_RATINGSTAR_POSITION_BOTTOM_LEFT</option>
@@ -76,66 +140,435 @@
                 </field>
 
                 <field
+                    name="pcWidth"
+                    type="number"
+                    label="MOD_RATINGSTAR_FIELD_PCWIDTH_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_PCWIDTH_DESC"
+                    hint="MOD_RATINGSTAR_OPTION_DEFAULT"
+                    min="100"
+                    max="215"
+                    step="1"
+                    filter="integer"
+                    validate="number"
+                    showon="variant:profile-card"
+                />
+
+                <field
+                    name="pcShowCount"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_SHOWCOUNT_LABEL"
+                    default=""
+                    validate="options"
+                    showon="variant:profile-card"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field
+                    name="pcColor"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_PCCOLOR_LABEL"
+                    default=""
+                    validate="options"
+                    showon="variant:profile-card"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="gold">MOD_RATINGSTAR_PCCOLOR_GOLD</option>
+                    <option value="silber">MOD_RATINGSTAR_PCCOLOR_SILBER</option>
+                    <option value="weiss">MOD_RATINGSTAR_PCCOLOR_WEISS</option>
+                </field>
+
+                <field
+                    name="pcMobile"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_PCMOBILE_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_PCMOBILE_DESC"
+                    default=""
+                    validate="options"
+                    showon="variant:profile-card"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="compact">MOD_RATINGSTAR_PCMOBILE_COMPACT</option>
+                    <option value="hide">MOD_RATINGSTAR_PCMOBILE_HIDE</option>
+                    <option value="full">MOD_RATINGSTAR_PCMOBILE_FULL</option>
+                </field>
+
+                <field
+                    name="pcClick"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_PCCLICK_LABEL"
+                    default=""
+                    validate="options"
+                    showon="variant:profile-card"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="overlay">MOD_RATINGSTAR_PCCLICK_OVERLAY</option>
+                    <option value="profile">MOD_RATINGSTAR_PCCLICK_PROFILE</option>
+                </field>
+
+                <!-- Rating bar -->
+                <field
+                    name="barShowCount"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_SHOWCOUNT_LABEL"
+                    default=""
+                    validate="options"
+                    showon="variant:bar"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field
+                    name="barShowVerified"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_SHOWVERIFIED_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_SHOWVERIFIED_DESC"
+                    default=""
+                    validate="options"
+                    showon="variant:bar"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <!-- Overall rating -->
+                <field
+                    name="heroShowCount"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_SHOWCOUNT_LABEL"
+                    default=""
+                    validate="options"
+                    showon="variant:hero"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field
+                    name="heroShowVerified"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_SHOWVERIFIED_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_SHOWVERIFIED_DESC"
+                    default=""
+                    validate="options"
+                    showon="variant:hero"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field
+                    name="heroShowBranches"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_HEROSHOWBRANCHES_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_HEROSHOWBRANCHES_DESC"
+                    default=""
+                    validate="options"
+                    showon="variant:hero"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <!-- Quote -->
+                <field
+                    name="quotePick"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_QUOTEPICK_LABEL"
+                    default=""
+                    validate="options"
+                    showon="variant:quote"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="best">MOD_RATINGSTAR_QUOTEPICK_BEST</option>
+                    <option value="newest">MOD_RATINGSTAR_QUOTEPICK_NEWEST</option>
+                    <option value="rotate">MOD_RATINGSTAR_QUOTEPICK_ROTATE</option>
+                    <option value="manual">MOD_RATINGSTAR_QUOTEPICK_MANUAL</option>
+                </field>
+
+                <field
+                    name="quoteWidth"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_WIDTH_LABEL"
+                    default=""
+                    validate="options"
+                    showon="variant:quote"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="s">MOD_RATINGSTAR_WIDTH_S</option>
+                    <option value="m">MOD_RATINGSTAR_WIDTH_M</option>
+                    <option value="l">MOD_RATINGSTAR_WIDTH_L</option>
+                    <option value="full">MOD_RATINGSTAR_WIDTH_FULL</option>
+                </field>
+
+                <!-- Carousel -->
+                <field
+                    name="carCount"
+                    type="number"
+                    label="MOD_RATINGSTAR_FIELD_REVIEWCOUNT_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_CARCOUNT_DESC"
+                    hint="MOD_RATINGSTAR_OPTION_DEFAULT"
+                    min="3"
+                    max="20"
+                    step="1"
+                    filter="integer"
+                    validate="number"
+                    showon="variant:carousel"
+                />
+
+                <field
+                    name="carRotate"
+                    type="number"
+                    label="MOD_RATINGSTAR_FIELD_CARROTATE_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_CARROTATE_DESC"
+                    hint="MOD_RATINGSTAR_OPTION_DEFAULT"
+                    min="0"
+                    max="30"
+                    step="1"
+                    filter="integer"
+                    validate="number"
+                    showon="variant:carousel"
+                />
+
+                <field
+                    name="carMin"
+                    type="number"
+                    label="MOD_RATINGSTAR_FIELD_MINSTARS_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_MINSTARS_DESC"
+                    hint="MOD_RATINGSTAR_OPTION_DEFAULT"
+                    min="1"
+                    max="5"
+                    step="1"
+                    filter="integer"
+                    validate="number"
+                    showon="variant:carousel"
+                />
+
+                <field
+                    name="carWidth"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_WIDTH_LABEL"
+                    default=""
+                    validate="options"
+                    showon="variant:carousel"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="s">MOD_RATINGSTAR_WIDTH_S</option>
+                    <option value="m">MOD_RATINGSTAR_WIDTH_M</option>
+                    <option value="l">MOD_RATINGSTAR_WIDTH_L</option>
+                    <option value="full">MOD_RATINGSTAR_WIDTH_FULL</option>
+                </field>
+
+                <!-- Review wall -->
+                <field
+                    name="wallCols"
+                    type="number"
+                    label="MOD_RATINGSTAR_FIELD_WALLCOLS_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_WALLCOLS_DESC"
+                    hint="MOD_RATINGSTAR_OPTION_DEFAULT"
+                    min="2"
+                    max="4"
+                    step="1"
+                    filter="integer"
+                    validate="number"
+                    showon="variant:wall"
+                />
+
+                <field
+                    name="wallTotal"
+                    type="number"
+                    label="MOD_RATINGSTAR_FIELD_REVIEWCOUNT_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_WALLTOTAL_DESC"
+                    hint="MOD_RATINGSTAR_OPTION_DEFAULT"
+                    min="2"
+                    max="50"
+                    step="1"
+                    filter="integer"
+                    validate="number"
+                    showon="variant:wall"
+                />
+
+                <field
+                    name="wallMin"
+                    type="number"
+                    label="MOD_RATINGSTAR_FIELD_MINSTARS_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_MINSTARS_DESC"
+                    hint="MOD_RATINGSTAR_OPTION_DEFAULT"
+                    min="1"
+                    max="5"
+                    step="1"
+                    filter="integer"
+                    validate="number"
+                    showon="variant:wall"
+                />
+
+                <field
+                    name="wallSort"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_WALLSORT_LABEL"
+                    default=""
+                    validate="options"
+                    showon="variant:wall"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="newest">MOD_RATINGSTAR_WALLSORT_NEWEST</option>
+                    <option value="best">MOD_RATINGSTAR_WALLSORT_BEST</option>
+                    <option value="mix">MOD_RATINGSTAR_WALLSORT_MIX</option>
+                </field>
+
+                <field
+                    name="wallWidth"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_WIDTH_LABEL"
+                    default=""
+                    validate="options"
+                    showon="variant:wall"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="m">MOD_RATINGSTAR_WIDTH_M</option>
+                    <option value="l">MOD_RATINGSTAR_WIDTH_L</option>
+                    <option value="xl">MOD_RATINGSTAR_WIDTH_XL</option>
+                    <option value="full">MOD_RATINGSTAR_WIDTH_FULL</option>
+                </field>
+
+                <!-- Footer bar -->
+                <field
+                    name="footerBarPosition"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_FOOTERBARPOSITION_LABEL"
+                    default=""
+                    validate="options"
+                    showon="variant:footer-bar"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="fixed">MOD_RATINGSTAR_FOOTERBARPOSITION_FIXED</option>
+                    <option value="inline">MOD_RATINGSTAR_FOOTERBARPOSITION_INLINE</option>
+                </field>
+
+                <field
+                    name="footerBarBg"
+                    type="color"
+                    label="MOD_RATINGSTAR_FIELD_FOOTERBARBG_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_COLOR_DESC"
+                    default=""
+                    format="hex"
+                    showon="variant:footer-bar"
+                />
+
+                <field
+                    name="footerBarText"
+                    type="color"
+                    label="MOD_RATINGSTAR_FIELD_FOOTERBARTEXT_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_COLOR_DESC"
+                    default=""
+                    format="hex"
+                    showon="variant:footer-bar"
+                />
+
+                <field
+                    name="footerBarLinkColor"
+                    type="color"
+                    label="MOD_RATINGSTAR_FIELD_FOOTERBARLINKCOLOR_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_COLOR_DESC"
+                    default=""
+                    format="hex"
+                    showon="variant:footer-bar"
+                />
+
+                <field
+                    name="footerBarLinkHover"
+                    type="color"
+                    label="MOD_RATINGSTAR_FIELD_FOOTERBARLINKHOVER_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_COLOR_DESC"
+                    default=""
+                    format="hex"
+                    showon="variant:footer-bar"
+                />
+
+                <!-- Quote, carousel, review wall -->
+                <field
+                    name="reviewsOnlyNamed"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_REVIEWSONLYNAMED_LABEL"
+                    default=""
+                    validate="options"
+                    showon="variant:quote,carousel,wall"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field
+                    name="reviewsOnlyWithComment"
+                    type="list"
+                    label="MOD_RATINGSTAR_FIELD_REVIEWSONLYWITHCOMMENT_LABEL"
+                    default=""
+                    validate="options"
+                    showon="variant:quote,carousel,wall"
+                >
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <!-- Rating bar, overall rating, quote, carousel, review wall -->
+                <field
                     name="theme"
                     type="list"
                     label="MOD_RATINGSTAR_FIELD_THEME_LABEL"
                     description="MOD_RATINGSTAR_FIELD_THEME_DESC"
                     default=""
                     validate="options"
-                    showon="variant:bar[OR]variant:hero[OR]variant:quote[OR]variant:carousel[OR]variant:wall"
+                    showon="variant:bar,hero,quote,carousel,wall"
                 >
-                    <option value="">MOD_RATINGSTAR_POSITION_INHERIT</option>
+                    <option value="">MOD_RATINGSTAR_OPTION_DEFAULT</option>
                     <option value="light">MOD_RATINGSTAR_THEME_LIGHT</option>
                     <option value="dark">MOD_RATINGSTAR_THEME_DARK</option>
                 </field>
 
                 <field
-                    name="render_mode"
-                    type="list"
-                    label="MOD_RATINGSTAR_FIELD_RENDER_MODE_LABEL"
-                    description="MOD_RATINGSTAR_FIELD_RENDER_MODE_DESC"
-                    default="live"
-                    validate="options"
-                >
-                    <option value="live">MOD_RATINGSTAR_RENDER_MODE_LIVE</option>
-                    <option value="static">MOD_RATINGSTAR_RENDER_MODE_STATIC</option>
-                </field>
-
-                <field
-                    name="static_variant"
-                    type="list"
-                    label="MOD_RATINGSTAR_FIELD_STATIC_VARIANT_LABEL"
-                    description="MOD_RATINGSTAR_FIELD_STATIC_VARIANT_DESC"
-                    default="banner"
-                    validate="options"
-                    showon="render_mode:static"
-                >
-                    <option value="banner">MOD_RATINGSTAR_STATIC_VARIANT_BANNER</option>
-                    <option value="circle">MOD_RATINGSTAR_STATIC_VARIANT_CIRCLE</option>
-                    <option value="card">MOD_RATINGSTAR_STATIC_VARIANT_CARD</option>
-                    <option value="award">MOD_RATINGSTAR_STATIC_VARIANT_AWARD</option>
-                </field>
-
-                <field
-                    name="award_slug"
-                    type="text"
-                    label="MOD_RATINGSTAR_FIELD_AWARD_SLUG_LABEL"
-                    description="MOD_RATINGSTAR_FIELD_AWARD_SLUG_DESC"
-                    filter="string"
-                    hint="top_rated-3"
-                    showon="render_mode:static[AND]static_variant:award"
+                    name="data_attributes"
+                    type="textarea"
+                    label="MOD_RATINGSTAR_FIELD_DATA_ATTRIBUTES_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_DATA_ATTRIBUTES_DESC"
+                    rows="3"
+                    filter="raw"
+                    hint="data-car-count=&quot;4&quot; data-car-width=&quot;s&quot;"
                 />
             </fieldset>
 
-            <fieldset name="advanced">
+            <fieldset name="advanced" addruleprefix="RatingStar\Module\Ratingstar\Site\Rule">
                 <field
                     name="base_origin"
                     type="url"
                     label="MOD_RATINGSTAR_FIELD_BASE_ORIGIN_LABEL"
                     description="MOD_RATINGSTAR_FIELD_BASE_ORIGIN_DESC"
-                    default="https://ratingstar.de"
                     filter="url"
+                    validate="url"
+                    schemes="http,https"
                     hint="https://ratingstar.de"
+                />
+
+                <field
+                    name="api_key"
+                    type="text"
+                    label="MOD_RATINGSTAR_FIELD_API_KEY_LABEL"
+                    description="MOD_RATINGSTAR_FIELD_API_KEY_DESC"
+                    message="MOD_RATINGSTAR_FIELD_API_KEY_INVALID"
+                    filter="trim"
+                    validate="apikey"
+                    maxlength="48"
+                    autocomplete="off"
+                    hint="rs_live_…"
                 />
 
                 <field
@@ -168,7 +601,7 @@
                     name="layout"
                     type="modulelayout"
                     label="JFIELD_ALT_LAYOUT_LABEL"
-                    class="custom-select"
+                    class="form-select"
                     validate="moduleLayout"
                 />
 
