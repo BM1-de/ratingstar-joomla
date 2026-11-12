@@ -6,7 +6,7 @@
     <creationDate>2026-11</creationDate>
     <copyright>(C) Baumgärtner Marketing GmbH</copyright>
     <license>GNU General Public License version 2 or later</license>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <description>PLG_SYSTEM_RATINGSTAR_XML_DESCRIPTION</description>
     <namespace path="src">RatingStar\Plugin\System\Ratingstar</namespace>
     <files>

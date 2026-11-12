@@ -6,12 +6,12 @@
         <element>pkg_ratingstar</element>
         <type>package</type>
         <client>site</client>
-        <version>1.0.0</version>
-        <infourl title="RatingStar 1.0.0">https://github.com/BM1-de/ratingstar-joomla/releases/tag/1.0.0</infourl>
+        <version>1.1.0</version>
+        <infourl title="RatingStar 1.1.0">https://github.com/BM1-de/ratingstar-joomla/releases/tag/1.1.0</infourl>
         <downloads>
-            <downloadurl type="full" format="zip">https://github.com/BM1-de/ratingstar-joomla/releases/download/1.0.0/pkg_ratingstar.zip</downloadurl>
+            <downloadurl type="full" format="zip">https://github.com/BM1-de/ratingstar-joomla/releases/download/1.1.0/pkg_ratingstar.zip</downloadurl>
         </downloads>
-        <sha256>83be0faf4e1816566f1dfa63bc3767a266f28e6db0bbc588267cd7cb8d10a918</sha256>
+        <sha256>3aa9ca3915b780039e826c89f79bf58d3dceb2bac6cf85d3a303eae5ce55d1d4</sha256>
         <tags>
             <tag>stable</tag>
         </tags>
