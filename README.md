@@ -117,14 +117,13 @@ Profil-Slug desselben Moduls.
 ## Sterne für Google
 
 Mit einem API-Key holt das Plugin die strukturierten Daten Ihrer Bewertungen
-(schema.org, Typ `LocalBusiness`) serverseitig bei RatingStar ab und gibt sie
+(schema.org) serverseitig bei RatingStar ab und gibt sie
 im Seitenkopf aus.
 
 - Je Seite gibt es genau einen Block. Die Siegel-Module unterdrücken dann die
   Ausgabe durch `seal.js` von selbst.
 - Eine Gesamtbewertung enthält der Block ab dem 4-Star-Tarif und sobald es
-  eigene, auf RatingStar abgegebene Bewertungen gibt. Aus anderen Portalen
-  übernommene Bewertungen zählen dafür nicht.
+  Bewertungen gibt. Es zählen dieselben Bewertungen wie in Ihrem Siegel.
 - Für die Sterne einer Gruppe tragen Sie den API-Key der Gruppe ein.
 - **Standortseiten:** Geben Sie einem Siegel-Modul im Reiter „Erweitert“ den
   API-Key der Filiale mit. Die Seiten, auf denen dieses Modul erscheint,

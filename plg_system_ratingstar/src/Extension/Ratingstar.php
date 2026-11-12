@@ -29,9 +29,11 @@ use Joomla\Http\HttpFactory;
  *
  * - Holds the site-wide settings (profile, group, API key, base origin) the
  *   seal modules fall back to.
- * - Prints the Google review stars server-side: the ready-made LocalBusiness
- *   JSON-LD of the key-based endpoint (`<origin>/seal/k/<key>.jsonld`),
- *   cached, validated and re-encoded, as exactly one block per page.
+ * - Prints the Google review stars server-side: the ready-made JSON-LD of
+ *   the key-based endpoint (`<origin>/seal/k/<key>.jsonld?schema=product`),
+ *   cached, validated and re-encoded, as exactly one block per page. The
+ *   schema.org type (Product or LocalBusiness) is set in the RatingStar
+ *   backend.
  * - Checks a profile, group or key against RatingStar when a seal module or
  *   this plugin is saved — as a hint only, the value is always kept.
  *
@@ -75,6 +77,18 @@ final class Ratingstar extends CMSPlugin implements SubscriberInterface
      * Timeout of a request to RatingStar in seconds.
      */
     private const HTTP_TIMEOUT = 5;
+
+    /**
+     * Path suffix of the JSON-LD endpoint. `schema=product` tells RatingStar
+     * that this plugin can print the Product type; the answer is a Product
+     * only when that is set in the RatingStar backend.
+     */
+    private const JSONLD_SUFFIX = '.jsonld?schema=product';
+
+    /**
+     * schema.org types RatingStar answers with.
+     */
+    private const ACCEPTED_TYPES = ['LocalBusiness', 'Product'];
 
     /**
      * Flags that keep the JSON safe inside a <script> block: a review text or
@@ -167,7 +181,7 @@ final class Ratingstar extends CMSPlugin implements SubscriberInterface
     }
 
     /**
-     * Adds the server-side LocalBusiness JSON-LD to the document head.
+     * Adds the server-side JSON-LD to the document head.
      *
      * @param   BeforeCompileHeadEvent  $event  The event.
      *
@@ -196,7 +210,7 @@ final class Ratingstar extends CMSPlugin implements SubscriberInterface
         }
 
         try {
-            $json = $this->getJsonLd($origin . '/seal/k/' . rawurlencode($key) . '.jsonld');
+            $json = $this->getJsonLd($origin . '/seal/k/' . rawurlencode($key) . self::JSONLD_SUFFIX);
 
             if ($json === '') {
                 return;
@@ -277,7 +291,7 @@ final class Ratingstar extends CMSPlugin implements SubscriberInterface
             $key = self::normalizeKey((string) ($params['api_key'] ?? ''));
 
             if ($key !== '') {
-                $this->verifyKey($origin . '/seal/k/' . rawurlencode($key) . '.jsonld');
+                $this->verifyKey($origin . '/seal/k/' . rawurlencode($key) . self::JSONLD_SUFFIX);
             }
         } catch (\Throwable $e) {
             // A failed check must never get in the way of saving.
@@ -330,7 +344,7 @@ final class Ratingstar extends CMSPlugin implements SubscriberInterface
         $app  = $this->getApplication();
         $data = json_decode($this->httpGet($url), true);
 
-        if (!\is_array($data) || ($data['@type'] ?? null) !== 'LocalBusiness') {
+        if (!\is_array($data) || !\in_array($data['@type'] ?? null, self::ACCEPTED_TYPES, true)) {
             $app->enqueueMessage(Text::_('PLG_SYSTEM_RATINGSTAR_KEY_UNVERIFIED'), 'warning');
 
             return;
@@ -454,7 +468,7 @@ final class Ratingstar extends CMSPlugin implements SubscriberInterface
 
     /**
      * Turns a response body into the JSON that is printed: decoded, checked
-     * to be a LocalBusiness object and encoded again — the remote text itself
+     * to be a LocalBusiness or Product object and encoded again — the remote text itself
      * never reaches the page. The content is passed on unchanged otherwise
      * (a bare LocalBusiness stays bare, ratings are never invented).
      *
@@ -470,7 +484,7 @@ final class Ratingstar extends CMSPlugin implements SubscriberInterface
 
         $data = json_decode($body, true);
 
-        if (!\is_array($data) || ($data['@type'] ?? null) !== 'LocalBusiness') {
+        if (!\is_array($data) || !\in_array($data['@type'] ?? null, self::ACCEPTED_TYPES, true)) {
             return '';
         }
 
